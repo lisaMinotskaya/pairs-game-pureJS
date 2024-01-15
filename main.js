@@ -36,7 +36,8 @@ function createCard(number) {
 
     cardFaceBack.textContent = number
 
-    card.append(cardFaceFront, cardFaceBack)
+    card.append(cardFaceBack, cardFaceFront)
+    card.dataset['number'] = number
 
     return card
 }
@@ -49,13 +50,51 @@ for (let element of array) {
 }
 
 const cards = document.querySelectorAll(".card")
+cards.forEach(card => card.addEventListener('click', flipCard))
+
+let isThereFlippedCard = false
+let lockCards = false
+let firstCard, secondCard
 
 function flipCard() {
-    this.classList.toggle('flip')
 
+    if (lockCards) {
+        return
+    }
+
+    this.classList.add('flip')
+    // console.log(isThereFlippedCard)
+    if (!isThereFlippedCard) {
+        isThereFlippedCard = true
+        firstCard = this
+        return
+    }
+
+    secondCard = this
+    isThereFlippedCard = false
+    // checkForMatch()
+
+    let isMatch = firstCard.dataset.number === secondCard.dataset.number
+    // console.log(isMatch)
+    isMatch ? disableCards() : unflipCards()
+    return
+}
+
+function disableCards() {
+    firstCard.removeEventListener('click', flipCard)
+    secondCard.removeEventListener('click', flipCard)
+}
+
+function unflipCards() {
+    lockCards = true
+    setTimeout(() => {
+        firstCard.classList.remove('flip')
+        secondCard.classList.remove('flip')
+        lockCards = false
+      }, 1000)
 }
   
-cards.forEach(card => card.addEventListener('click', flipCard))
+
 
 // Этап 3. Используйте две созданные функции для создания массива перемешанными номерами. На основе этого массива вы можете создать DOM-элементы карточек. У каждой карточки будет свой номер из массива произвольных чисел. Вы также можете создать для этого специальную функцию. count - количество пар.
 

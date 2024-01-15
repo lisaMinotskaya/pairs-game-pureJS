@@ -66,7 +66,7 @@
     background-position: center;
     background-repeat: no-repeat;
     backface-visibility: hidden;
-    transform: rotateY(-180deg);
+    /* transform: rotateY(-180deg); */
 }    
 
 .number {
@@ -78,7 +78,7 @@
     font-weight: bold;
     font-size: 40px;
     backface-visibility: hidden;
-    /* transform: rotateY(180deg); */
+    transform: rotateY(180deg);
 }
 
 .card:active {
