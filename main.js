@@ -45,21 +45,51 @@
 
     function startGame(key) {
 
+        let min = sec = '0' + 0, startTimer
+        runTimer()
+
+        function runTimer() {
+    
+            startTimer = setInterval(() => {
+    
+                sec++
+                sec = sec < 10 ? '0' + sec : sec
+    
+                if (sec == 60) {
+                    min++
+                    min = min < 10 ? '0' + min : min
+                    sec = '0' + 0
+                }
+    
+                printTimer()
+    
+            }, 1000)
+            printTimer()
+        }
+
+        function printTimer() {
+            let timer = document.querySelector('.timer')
+            timer.innerHTML = `&#9200 Время игры ${min}:${sec}`
+        }
+
         const pairsNumber = parseInt(getFromStorage(key))
         const array = createNumbersArray(pairsNumber)
         shuffle(array)
 
         let cardsContainer = document.querySelector('.cards-container')
+        let header = document.querySelector('.header')
+        let footer = document.querySelector('.footer')
 
         if ([5, 10].includes(pairsNumber)) {
-            cardsContainer.style.width = '71.77%'
+            cardsContainer.style.width = header.style.width = footer.style.width = '71.77%'
         } else if ([6, 8].includes(pairsNumber)) {
-            cardsContainer.style.width = '57.4%'
+            cardsContainer.style.width = header.style.width = footer.style.width = '65%'
         } else if (pairsNumber == 9) {
-            cardsContainer.style.width = '86.12%'
+            cardsContainer.style.width = header.style.width = footer.style.width = '86.12%'
         } else {
             let containerWidth = 150 * pairsNumber * 100 / 1045
             cardsContainer.style.width = containerWidth.toString() + '%'
+            header.style.width = footer.style.width = '65%'
         }
 
         for (let element of array) {
@@ -73,6 +103,8 @@
         let isThereFlippedCard = false
         let lockCards = false
         let firstCard, secondCard
+        let step = 0
+        let count = 0
 
         function flipCard() {
 
@@ -86,16 +118,23 @@
                 firstCard = this
                 return
             }
-        
+            
             secondCard = this
             isThereFlippedCard = false
-        
+
             let isMatch = firstCard.dataset.number === secondCard.dataset.number
             isMatch ? disableCards() : unflipCards()
+
+            if (count == pairsNumber) {
+                victory()
+            }
+            step++
+            printSteps()
             return
         }
         
         function disableCards() {
+            count++
             firstCard.removeEventListener('click', flipCard)
             secondCard.removeEventListener('click', flipCard)
         }
@@ -107,6 +146,28 @@
                 secondCard.classList.remove('flip')
                 lockCards = false
             }, 1000)
+        }
+
+        function printSteps() {
+            let steps = document.querySelector('.steps')
+            steps.innerHTML = `&#128200 Ходы <br> ${step}`
+        }
+
+        function victory() {
+            clearInterval(startTimer)
+            let restartBtn = document.createElement('button')
+            restartBtn.classList.add('restart-btn')
+            restartBtn.textContent = 'Играть заново'
+            let backBtn = document.createElement('a')
+            backBtn.classList.add('back-btn')
+            backBtn.textContent = 'На главную'
+            backBtn.href = 'start_page.html'
+            footer.append(restartBtn, backBtn)
+
+            restartBtn.addEventListener('click', () => {
+                location.reload()
+            })
+
         }
 
     }
