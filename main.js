@@ -51,7 +51,6 @@
         function runTimer() {
     
             startTimer = setInterval(() => {
-    
                 sec++
                 sec = sec < 10 ? '0' + sec : sec
     
@@ -107,8 +106,11 @@
         let count = 0
 
         function flipCard() {
-
             if (lockCards) {
+                return
+            }
+
+            if (this == firstCard) {
                 return
             }
         
@@ -120,7 +122,7 @@
             }
             
             secondCard = this
-            isThereFlippedCard = false
+            // isThereFlippedCard = false
 
             let isMatch = firstCard.dataset.number === secondCard.dataset.number
             isMatch ? disableCards() : unflipCards()
@@ -137,15 +139,24 @@
             count++
             firstCard.removeEventListener('click', flipCard)
             secondCard.removeEventListener('click', flipCard)
+
+            resetGame()
         }
         
         function unflipCards() {
             lockCards = true
+            
             setTimeout(() => {
                 firstCard.classList.remove('flip')
                 secondCard.classList.remove('flip')
-                lockCards = false
+
+                resetGame()
             }, 1000)
+        }
+
+        function resetGame() {
+            [isThereFlippedCard, lockCards] = [false, false]
+            [firstCard, secondCard] = [null, null]
         }
 
         function printSteps() {
